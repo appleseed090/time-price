@@ -122,6 +122,10 @@ export default function Calculator() {
               required
               error={!parseFloat(inputs.annualSalary)}
             />
+            <p className="text-xs text-gray-400 -mt-1 mb-3 leading-relaxed">
+              💡 For a more realistic picture, try using your take-home pay. If you
+              track a budget, your discretionary income works even better.
+            </p>
             <div className="mb-3">
               <label className="block text-xs font-medium text-gray-500 mb-1">
                 Pay frequency
