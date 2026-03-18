@@ -1,5 +1,7 @@
 export type IncomeMode = "hourly" | "salary";
 
+export type SalaryFrequency = "yearly" | "monthly" | "biweekly" | "weekly";
+
 export type TimeSavedUnit = "per_use" | "per_week" | "per_month";
 
 export type RecurringFrequency = "weekly" | "monthly" | "yearly";
@@ -8,6 +10,7 @@ export interface Inputs {
   incomeMode: IncomeMode;
   hourlyWage: string;
   annualSalary: string;
+  salaryFrequency: SalaryFrequency;
   weeklyHours: string;
   purchaseName: string;
   purchasePrice: string;

@@ -1,5 +1,6 @@
 import type {
   IncomeMode,
+  SalaryFrequency,
   TimeSavedUnit,
   TimeCostResult,
   TimeSavingResult,
@@ -7,15 +8,30 @@ import type {
   Preset,
 } from "./types";
 
+function salaryPeriodsPerYear(freq: SalaryFrequency): number {
+  switch (freq) {
+    case "yearly":
+      return 1;
+    case "monthly":
+      return 12;
+    case "biweekly":
+      return 26;
+    case "weekly":
+      return 52;
+  }
+}
+
 export function getHourlyRate(
   mode: IncomeMode,
   hourlyWage: number,
-  annualSalary: number,
+  salary: number,
+  salaryFrequency: SalaryFrequency,
   weeklyHours: number
 ): number {
   if (mode === "hourly") return hourlyWage;
   if (weeklyHours <= 0) return 0;
-  return annualSalary / (weeklyHours * 52);
+  const annual = salary * salaryPeriodsPerYear(salaryFrequency);
+  return annual / (weeklyHours * 52);
 }
 
 function periodsPerYear(freq: RecurringFrequency): number {

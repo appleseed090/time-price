@@ -16,6 +16,7 @@ const DEFAULT_INPUTS: Inputs = {
   incomeMode: "salary",
   hourlyWage: "",
   annualSalary: "",
+  salaryFrequency: "yearly",
   weeklyHours: "40",
   purchaseName: "",
   purchasePrice: "",
@@ -39,9 +40,10 @@ export default function Calculator() {
         inputs.incomeMode,
         parseFloat(inputs.hourlyWage) || 0,
         parseFloat(inputs.annualSalary) || 0,
+        inputs.salaryFrequency,
         parseFloat(inputs.weeklyHours) || 40
       ),
-    [inputs.incomeMode, inputs.hourlyWage, inputs.annualSalary, inputs.weeklyHours]
+    [inputs.incomeMode, inputs.hourlyWage, inputs.annualSalary, inputs.salaryFrequency, inputs.weeklyHours]
   );
 
   const timeCost = useMemo(
@@ -104,21 +106,40 @@ export default function Calculator() {
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              {mode === "salary" ? "Annual Salary" : "Hourly Wage"}
+              {mode === "salary" ? "Salary" : "Hourly Wage"}
             </button>
           ))}
         </div>
 
         {inputs.incomeMode === "salary" ? (
-          <InputField
-            label="Annual salary"
-            prefix="$"
-            value={inputs.annualSalary}
-            onChange={(v) => set("annualSalary", v)}
-            placeholder="65,000"
-            required
-            error={!parseFloat(inputs.annualSalary)}
-          />
+          <>
+            <InputField
+              label="Salary"
+              prefix="$"
+              value={inputs.annualSalary}
+              onChange={(v) => set("annualSalary", v)}
+              placeholder="65,000"
+              required
+              error={!parseFloat(inputs.annualSalary)}
+            />
+            <div className="mb-3">
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                Pay frequency
+              </label>
+              <select
+                value={inputs.salaryFrequency}
+                onChange={(e) =>
+                  set("salaryFrequency", e.target.value as Inputs["salaryFrequency"])
+                }
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
+              >
+                <option value="yearly">Per year</option>
+                <option value="monthly">Per month</option>
+                <option value="biweekly">Every 2 weeks</option>
+                <option value="weekly">Per week</option>
+              </select>
+            </div>
+          </>
         ) : (
           <InputField
             label="Hourly wage"
@@ -153,19 +174,6 @@ export default function Calculator() {
           The Purchase
         </h2>
 
-        {/* Presets */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {PRESETS.map((p, i) => (
-            <button
-              key={p.name}
-              onClick={() => applyPreset(i)}
-              className="text-xs px-3 py-1.5 rounded-full bg-gray-50 border border-gray-200 hover:bg-gray-100 hover:border-gray-300 transition-all"
-            >
-              {p.emoji} {p.name}
-            </button>
-          ))}
-        </div>
-
         <TextInputField
           label="What are you buying?"
           value={inputs.purchaseName}
@@ -187,18 +195,20 @@ export default function Calculator() {
         {/* Recurring toggle */}
         <div className="mt-4">
           <label className="flex items-center gap-3 cursor-pointer">
-            <div
-              className={`relative w-10 h-6 rounded-full transition-colors ${
-                inputs.isRecurring ? "bg-indigo-500" : "bg-gray-200"
-              }`}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={inputs.isRecurring}
               onClick={() => set("isRecurring", !inputs.isRecurring)}
+              className="relative w-10 h-6 rounded-full transition-colors"
+              style={{ backgroundColor: inputs.isRecurring ? "#10b981" : "#e5e7eb" }}
             >
               <div
                 className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
                   inputs.isRecurring ? "translate-x-4" : ""
                 }`}
               />
-            </div>
+            </button>
             <span className="text-sm text-gray-700">
               This is a recurring payment
             </span>
@@ -227,18 +237,20 @@ export default function Calculator() {
         {/* Time saving toggle */}
         <div className="mt-4">
           <label className="flex items-center gap-3 cursor-pointer">
-            <div
-              className={`relative w-10 h-6 rounded-full transition-colors ${
-                inputs.savesTime ? "bg-emerald-500" : "bg-gray-200"
-              }`}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={inputs.savesTime}
               onClick={() => set("savesTime", !inputs.savesTime)}
+              className="relative w-10 h-6 rounded-full transition-colors"
+              style={{ backgroundColor: inputs.savesTime ? "#10b981" : "#e5e7eb" }}
             >
               <div
                 className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
                   inputs.savesTime ? "translate-x-4" : ""
                 }`}
               />
-            </div>
+            </button>
             <span className="text-sm text-gray-700">
               This purchase saves me time
             </span>
@@ -293,6 +305,8 @@ export default function Calculator() {
           timeCost={timeCost}
           timeSaving={timeSaving}
           purchaseName={inputs.purchaseName}
+          isRecurring={inputs.isRecurring}
+          recurringFrequency={inputs.recurringFrequency}
         />
       )}
 
