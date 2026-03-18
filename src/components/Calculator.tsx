@@ -19,6 +19,8 @@ const DEFAULT_INPUTS: Inputs = {
   weeklyHours: "40",
   purchaseName: "",
   purchasePrice: "",
+  isRecurring: false,
+  recurringFrequency: "monthly",
   savesTime: false,
   timeSaved: "",
   timeSavedUnit: "per_use",
@@ -43,8 +45,14 @@ export default function Calculator() {
   );
 
   const timeCost = useMemo(
-    () => computeTimeCost(parseFloat(inputs.purchasePrice) || 0, hourlyRate),
-    [inputs.purchasePrice, hourlyRate]
+    () =>
+      computeTimeCost(
+        parseFloat(inputs.purchasePrice) || 0,
+        hourlyRate,
+        inputs.isRecurring,
+        inputs.recurringFrequency
+      ),
+    [inputs.purchasePrice, hourlyRate, inputs.isRecurring, inputs.recurringFrequency]
   );
 
   const timeSaving = useMemo(() => {
@@ -63,6 +71,8 @@ export default function Calculator() {
       ...prev,
       purchaseName: p.name,
       purchasePrice: p.price.toString(),
+      isRecurring: p.isRecurring ?? false,
+      recurringFrequency: p.recurringFrequency ?? "monthly",
       savesTime: p.savesTime,
       timeSaved: p.timeSaved?.toString() ?? "",
       timeSavedUnit: p.timeSavedUnit ?? "per_use",
@@ -173,6 +183,46 @@ export default function Calculator() {
           required
           error={!parseFloat(inputs.purchasePrice)}
         />
+
+        {/* Recurring toggle */}
+        <div className="mt-4">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <div
+              className={`relative w-10 h-6 rounded-full transition-colors ${
+                inputs.isRecurring ? "bg-indigo-500" : "bg-gray-200"
+              }`}
+              onClick={() => set("isRecurring", !inputs.isRecurring)}
+            >
+              <div
+                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                  inputs.isRecurring ? "translate-x-4" : ""
+                }`}
+              />
+            </div>
+            <span className="text-sm text-gray-700">
+              This is a recurring payment
+            </span>
+          </label>
+        </div>
+
+        {inputs.isRecurring && (
+          <div className="mt-3 pl-1">
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              How often?
+            </label>
+            <select
+              value={inputs.recurringFrequency}
+              onChange={(e) =>
+                set("recurringFrequency", e.target.value as Inputs["recurringFrequency"])
+              }
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
+            >
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+        )}
 
         {/* Time saving toggle */}
         <div className="mt-4">

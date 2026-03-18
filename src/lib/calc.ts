@@ -3,6 +3,7 @@ import type {
   TimeSavedUnit,
   TimeCostResult,
   TimeSavingResult,
+  RecurringFrequency,
   Preset,
 } from "./types";
 
@@ -17,13 +18,29 @@ export function getHourlyRate(
   return annualSalary / (weeklyHours * 52);
 }
 
-export function computeTimeCost(
-  price: number,
-  hourlyRate: number
-): TimeCostResult | null {
-  if (hourlyRate <= 0 || price < 0) return null;
-  const hours = price / hourlyRate;
+function periodsPerYear(freq: RecurringFrequency): number {
+  switch (freq) {
+    case "weekly":
+      return 52;
+    case "monthly":
+      return 12;
+    case "yearly":
+      return 1;
+  }
+}
 
+function frequencyLabel(freq: RecurringFrequency): string {
+  switch (freq) {
+    case "weekly":
+      return "week";
+    case "monthly":
+      return "month";
+    case "yearly":
+      return "year";
+  }
+}
+
+function formatTimeCostLabel(hours: number): { label: string; humanFriendly: string } {
   let label: string;
   let humanFriendly: string;
 
@@ -49,6 +66,33 @@ export function computeTimeCost(
     if (weeks <= 2) humanFriendly = "A week or two of work";
     else if (weeks <= 4) humanFriendly = "About a month of work";
     else humanFriendly = `That's ${weeks} weeks of full-time work`;
+  }
+
+  return { label, humanFriendly };
+}
+
+export function computeTimeCost(
+  price: number,
+  hourlyRate: number,
+  isRecurring?: boolean,
+  recurringFrequency?: RecurringFrequency
+): TimeCostResult | null {
+  if (hourlyRate <= 0 || price < 0) return null;
+  const hours = price / hourlyRate;
+  const { label, humanFriendly } = formatTimeCostLabel(hours);
+
+  if (isRecurring && recurringFrequency) {
+    const yearly = periodsPerYear(recurringFrequency);
+    const yearlyHours = hours * yearly;
+    const yearlyFmt = formatTimeCostLabel(yearlyHours);
+    return {
+      hours,
+      label,
+      humanFriendly,
+      yearlyHours,
+      yearlyLabel: yearlyFmt.label,
+      perPeriodLabel: `per ${frequencyLabel(recurringFrequency)}`,
+    };
   }
 
   return { hours, label, humanFriendly };
@@ -115,6 +159,8 @@ export const PRESETS: Preset[] = [
     name: "House cleaner",
     emoji: "🧹",
     price: 120,
+    isRecurring: true,
+    recurringFrequency: "monthly",
     savesTime: true,
     timeSaved: 180,
     timeSavedUnit: "per_use",
@@ -124,6 +170,8 @@ export const PRESETS: Preset[] = [
     name: "Meal kit",
     emoji: "🥘",
     price: 80,
+    isRecurring: true,
+    recurringFrequency: "monthly",
     savesTime: true,
     timeSaved: 45,
     timeSavedUnit: "per_use",
@@ -133,6 +181,8 @@ export const PRESETS: Preset[] = [
     name: "Software subscription",
     emoji: "💻",
     price: 15,
+    isRecurring: true,
+    recurringFrequency: "monthly",
     savesTime: true,
     timeSaved: 120,
     timeSavedUnit: "per_month",
