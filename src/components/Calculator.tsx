@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import type { Inputs } from "../lib/types";
 import {
   getHourlyRate,
@@ -24,11 +24,19 @@ const DEFAULT_INPUTS: Inputs = {
   usesPerMonth: "4",
 };
 
+type TouchedFields = Record<string, boolean>;
+
 export default function Calculator() {
   const [inputs, setInputs] = useState<Inputs>(DEFAULT_INPUTS);
+  const [touched, setTouched] = useState<TouchedFields>({});
 
   const set = <K extends keyof Inputs>(key: K, value: Inputs[K]) =>
     setInputs((prev) => ({ ...prev, [key]: value }));
+
+  const touch = useCallback(
+    (field: string) => setTouched((prev) => ({ ...prev, [field]: true })),
+    []
+  );
 
   const hourlyRate = useMemo(
     () =>
@@ -99,7 +107,9 @@ export default function Calculator() {
             prefix="$"
             value={inputs.annualSalary}
             onChange={(v) => set("annualSalary", v)}
+            onBlur={() => touch("annualSalary")}
             placeholder="65,000"
+            error={touched.annualSalary && !parseFloat(inputs.annualSalary) ? "Required" : undefined}
           />
         ) : (
           <InputField
@@ -107,7 +117,9 @@ export default function Calculator() {
             prefix="$"
             value={inputs.hourlyWage}
             onChange={(v) => set("hourlyWage", v)}
+            onBlur={() => touch("hourlyWage")}
             placeholder="25"
+            error={touched.hourlyWage && !parseFloat(inputs.hourlyWage) ? "Required" : undefined}
           />
         )}
 
@@ -115,7 +127,9 @@ export default function Calculator() {
           label="Hours per week"
           value={inputs.weeklyHours}
           onChange={(v) => set("weeklyHours", v)}
+          onBlur={() => touch("weeklyHours")}
           placeholder="40"
+          error={touched.weeklyHours && !parseFloat(inputs.weeklyHours) ? "Required" : undefined}
         />
 
         {hourlyRate > 0 && (
@@ -149,7 +163,9 @@ export default function Calculator() {
           prefix="$"
           value={inputs.purchasePrice}
           onChange={(v) => set("purchasePrice", v)}
+          onBlur={() => touch("purchasePrice")}
           placeholder="120"
+          error={touched.purchasePrice && !parseFloat(inputs.purchasePrice) ? "Required" : undefined}
         />
 
         {/* Time saving toggle */}
@@ -179,7 +195,9 @@ export default function Calculator() {
               label="Time saved (minutes)"
               value={inputs.timeSaved}
               onChange={(v) => set("timeSaved", v)}
+              onBlur={() => touch("timeSaved")}
               placeholder="30"
+              error={touched.timeSaved && inputs.savesTime && !parseFloat(inputs.timeSaved) ? "Required" : undefined}
             />
 
             <div>
@@ -204,7 +222,9 @@ export default function Calculator() {
                 label="Uses per month"
                 value={inputs.usesPerMonth}
                 onChange={(v) => set("usesPerMonth", v)}
+                onBlur={() => touch("usesPerMonth")}
                 placeholder="4"
+                error={touched.usesPerMonth && inputs.savesTime && inputs.timeSavedUnit === "per_use" && !parseFloat(inputs.usesPerMonth) ? "Required" : undefined}
               />
             )}
           </div>
@@ -226,13 +246,17 @@ function InputField({
   prefix,
   value,
   onChange,
+  onBlur,
   placeholder,
+  error,
 }: {
   label: string;
   prefix?: string;
   value: string;
   onChange: (v: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
+  error?: string;
 }) {
   return (
     <div className="mb-3">
@@ -253,12 +277,18 @@ function InputField({
             const v = e.target.value.replace(/[^0-9.,]/g, "");
             onChange(v);
           }}
+          onBlur={onBlur}
           placeholder={placeholder}
-          className={`w-full rounded-lg border border-gray-200 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 ${
-            prefix ? "pl-7 pr-3" : "px-3"
-          }`}
+          className={`w-full rounded-lg border py-2 text-sm focus:outline-none focus:ring-2 transition-colors ${
+            error
+              ? "border-red-300 focus:ring-red-200 focus:border-red-400 bg-red-50"
+              : "border-gray-200 focus:ring-indigo-200 focus:border-indigo-400"
+          } ${prefix ? "pl-7 pr-3" : "px-3"}`}
         />
       </div>
+      {error && (
+        <p className="text-xs text-red-500 mt-1">{error}</p>
+      )}
     </div>
   );
 }
