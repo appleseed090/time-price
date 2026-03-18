@@ -132,7 +132,7 @@ export default function ResultCard({
   );
 
   const selectClass =
-    "inline-block appearance-none bg-white/70 border border-indigo-200 rounded-lg px-2 py-1 text-lg sm:text-xl font-bold text-indigo-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-200";
+    "inline-block bg-white/70 border border-indigo-200 rounded-lg pl-2 pr-7 py-1 text-lg sm:text-xl font-bold text-indigo-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-[length:12px_12px] bg-[right_8px_center] bg-no-repeat";
 
   return (
     <section className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-sm border border-indigo-100 p-5 sm:p-6">

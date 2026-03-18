@@ -1,11 +1,35 @@
 import { computeTimeCost } from "../lib/calc";
+import type { RecurringFrequency } from "../lib/types";
 
-const EXAMPLES = [
-  { emoji: "🧹", name: "Cleaning service", price: 120, desc: "Biweekly deep clean" },
-  { emoji: "📺", name: "Streaming subscription", price: 15, desc: "Monthly subscription" },
+const EXAMPLES: {
+  emoji: string;
+  name: string;
+  price: number;
+  desc: string;
+  recurring?: boolean;
+  frequency?: RecurringFrequency;
+}[] = [
+  { emoji: "🧹", name: "Cleaning service", price: 120, desc: "Biweekly deep clean", recurring: true, frequency: "monthly" },
+  { emoji: "📺", name: "Streaming subscription", price: 15, desc: "Monthly subscription", recurring: true, frequency: "monthly" },
   { emoji: "🤖", name: "Robot vacuum", price: 400, desc: "One-time purchase" },
-  { emoji: "🥘", name: "Weekly meal prep", price: 80, desc: "Pre-made meals" },
+  { emoji: "🥘", name: "Weekly meal prep", price: 80, desc: "Pre-made meals", recurring: true, frequency: "weekly" },
 ];
+
+function periodsPerYear(freq: RecurringFrequency): number {
+  switch (freq) {
+    case "weekly": return 52;
+    case "monthly": return 12;
+    case "yearly": return 1;
+  }
+}
+
+function frequencyLabel(freq: RecurringFrequency): string {
+  switch (freq) {
+    case "weekly": return "/wk";
+    case "monthly": return "/mo";
+    case "yearly": return "/yr";
+  }
+}
 
 export default function ExampleCards({ hourlyRate }: { hourlyRate: number }) {
   if (hourlyRate <= 0) return null;
@@ -18,6 +42,17 @@ export default function ExampleCards({ hourlyRate }: { hourlyRate: number }) {
       <div className="grid grid-cols-2 gap-3">
         {EXAMPLES.map((ex) => {
           const cost = computeTimeCost(ex.price, hourlyRate);
+          if (!cost) return null;
+
+          let label: string;
+          if (ex.recurring && ex.frequency) {
+            const yearlyHours = cost.hours * periodsPerYear(ex.frequency);
+            const yearCost = computeTimeCost(ex.price * periodsPerYear(ex.frequency), hourlyRate);
+            label = `${yearCost?.label ?? cost.label} per year`;
+          } else {
+            label = cost.label;
+          }
+
           return (
             <div
               key={ex.name}
@@ -25,12 +60,12 @@ export default function ExampleCards({ hourlyRate }: { hourlyRate: number }) {
             >
               <div className="text-xl mb-1">{ex.emoji}</div>
               <p className="text-sm font-medium text-gray-900">{ex.name}</p>
-              <p className="text-xs text-gray-400 mb-2">${ex.price}</p>
-              {cost && (
-                <p className="text-sm font-semibold text-indigo-600">
-                  {cost.label}
-                </p>
-              )}
+              <p className="text-xs text-gray-400 mb-2">
+                ${ex.price}{ex.recurring && ex.frequency ? frequencyLabel(ex.frequency) : ""}
+              </p>
+              <p className="text-sm font-semibold text-indigo-600">
+                {label}
+              </p>
             </div>
           );
         })}
