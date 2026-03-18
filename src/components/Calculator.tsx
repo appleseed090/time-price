@@ -17,6 +17,7 @@ const DEFAULT_INPUTS: Inputs = {
   hourlyWage: "",
   annualSalary: "",
   weeklyHours: "40",
+  purchaseName: "",
   purchasePrice: "",
   savesTime: false,
   timeSaved: "",
@@ -60,6 +61,7 @@ export default function Calculator() {
     const p = PRESETS[i];
     setInputs((prev) => ({
       ...prev,
+      purchaseName: p.name,
       purchasePrice: p.price.toString(),
       savesTime: p.savesTime,
       timeSaved: p.timeSaved?.toString() ?? "",
@@ -154,6 +156,14 @@ export default function Calculator() {
           ))}
         </div>
 
+        <TextInputField
+          label="What are you buying?"
+          value={inputs.purchaseName}
+          onChange={(v) => set("purchaseName", v)}
+          placeholder="e.g. Robot vacuum, Gym membership"
+          maxLength={60}
+        />
+
         <InputField
           label="Purchase price"
           prefix="$"
@@ -228,7 +238,13 @@ export default function Calculator() {
       </section>
 
       {/* Results */}
-      {timeCost && <ResultCard timeCost={timeCost} timeSaving={timeSaving} />}
+      {timeCost && (
+        <ResultCard
+          timeCost={timeCost}
+          timeSaving={timeSaving}
+          purchaseName={inputs.purchaseName}
+        />
+      )}
 
       {/* Examples & Explanation */}
       <ExampleCards hourlyRate={hourlyRate} />
@@ -283,6 +299,43 @@ function InputField({
           } ${prefix ? "pl-7 pr-3" : "px-3"}`}
         />
       </div>
+    </div>
+  );
+}
+
+function TextInputField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  maxLength,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  maxLength?: number;
+}) {
+  return (
+    <div className="mb-3">
+      <label className="block text-xs font-medium text-gray-500 mb-1">
+        {label}
+      </label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          const v = maxLength ? e.target.value.slice(0, maxLength) : e.target.value;
+          onChange(v);
+        }}
+        placeholder={placeholder}
+        className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+      />
+      {maxLength && value.length > maxLength * 0.8 && (
+        <p className="text-xs text-gray-400 mt-0.5 text-right">
+          {value.length}/{maxLength}
+        </p>
+      )}
     </div>
   );
 }

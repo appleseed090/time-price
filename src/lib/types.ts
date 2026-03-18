@@ -7,6 +7,7 @@ export interface Inputs {
   hourlyWage: string;
   annualSalary: string;
   weeklyHours: string;
+  purchaseName: string;
   purchasePrice: string;
   savesTime: boolean;
   timeSaved: string;

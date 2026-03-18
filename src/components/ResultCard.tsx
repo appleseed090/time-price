@@ -4,15 +4,23 @@ import { formatHours } from "../lib/calc";
 export default function ResultCard({
   timeCost,
   timeSaving,
+  purchaseName,
 }: {
   timeCost: TimeCostResult;
   timeSaving: TimeSavingResult | null;
+  purchaseName?: string;
 }) {
   return (
     <section className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-sm border border-indigo-100 p-5 sm:p-6">
       <h2 className="text-sm font-semibold text-indigo-400 uppercase tracking-wide mb-3">
         Time Cost
       </h2>
+
+      {purchaseName && (
+        <p className="text-sm text-gray-500 mb-1">
+          {purchaseName} costs you:
+        </p>
+      )}
 
       <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
         {timeCost.label}
