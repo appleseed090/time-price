@@ -88,98 +88,6 @@ export default function Calculator() {
         <span className="text-red-500">*</span> Required field
       </p>
 
-      {/* Income section */}
-      <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-          Your Income
-        </h2>
-
-        {/* Toggle */}
-        <div className="flex rounded-lg bg-gray-100 p-1 mb-4">
-          {(["salary", "hourly"] as const).map((mode) => (
-            <button
-              key={mode}
-              onClick={() => set("incomeMode", mode)}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
-                inputs.incomeMode === mode
-                  ? "bg-white shadow-sm text-gray-900"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {mode === "salary" ? "Salary" : "Hourly Wage"}
-            </button>
-          ))}
-        </div>
-
-        {inputs.incomeMode === "salary" ? (
-          <>
-            <InputField
-              label="Salary"
-              prefix="$"
-              value={inputs.annualSalary}
-              onChange={(v) => set("annualSalary", v)}
-              placeholder="65,000"
-              required
-              error={!parseFloat(inputs.annualSalary)}
-            />
-            <p className="text-xs text-gray-400 -mt-1 mb-3 leading-relaxed">
-              💡 For a more realistic picture, try using your{" "}
-              <a
-                href="https://www.adp.com/resources/tools/calculators/salary-paycheck-calculator.aspx"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-indigo-500 transition-colors"
-              >
-                take-home pay
-              </a>
-              . If you track a budget, your discretionary income works even better.
-            </p>
-            <div className="mb-3">
-              <label className="block text-xs font-medium text-gray-500 mb-1">
-                Pay frequency
-              </label>
-              <select
-                value={inputs.salaryFrequency}
-                onChange={(e) =>
-                  set("salaryFrequency", e.target.value as Inputs["salaryFrequency"])
-                }
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
-              >
-                <option value="yearly">Per year</option>
-                <option value="monthly">Per month</option>
-                <option value="biweekly">Every 2 weeks</option>
-                <option value="weekly">Per week</option>
-              </select>
-            </div>
-          </>
-        ) : (
-          <InputField
-            label="Hourly wage"
-            prefix="$"
-            value={inputs.hourlyWage}
-            onChange={(v) => set("hourlyWage", v)}
-            placeholder="25"
-            required
-            error={!parseFloat(inputs.hourlyWage)}
-          />
-        )}
-
-        <InputField
-          label="Hours per week"
-          value={inputs.weeklyHours}
-          onChange={(v) => set("weeklyHours", v)}
-          placeholder="40"
-          required
-          error={!parseFloat(inputs.weeklyHours)}
-        />
-
-        {hourlyRate > 0 && (
-          <p className="text-xs text-gray-400 mt-2">
-            ≈ ${hourlyRate.toFixed(2)}/hr
-          </p>
-        )}
-      </section>
-
       {/* Purchase section */}
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
         <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
@@ -308,6 +216,98 @@ export default function Calculator() {
               />
             )}
           </div>
+        )}
+      </section>
+
+      {/* Income section */}
+      <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+          Your Income
+        </h2>
+
+        {/* Toggle */}
+        <div className="flex rounded-lg bg-gray-100 p-1 mb-4">
+          {(["salary", "hourly"] as const).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => set("incomeMode", mode)}
+              className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+                inputs.incomeMode === mode
+                  ? "bg-white shadow-sm text-gray-900"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              {mode === "salary" ? "Salary" : "Hourly Wage"}
+            </button>
+          ))}
+        </div>
+
+        {inputs.incomeMode === "salary" ? (
+          <>
+            <InputField
+              label="Salary"
+              prefix="$"
+              value={inputs.annualSalary}
+              onChange={(v) => set("annualSalary", v)}
+              placeholder="65,000"
+              required
+              error={!parseFloat(inputs.annualSalary)}
+            />
+            <p className="text-xs text-gray-400 -mt-1 mb-3 leading-relaxed">
+              💡 For a more realistic picture, try using your{" "}
+              <a
+                href="https://www.adp.com/resources/tools/calculators/salary-paycheck-calculator.aspx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-indigo-500 transition-colors"
+              >
+                take-home pay
+              </a>
+              . If you track a budget, your discretionary income works even better.
+            </p>
+            <div className="mb-3">
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                Pay frequency
+              </label>
+              <select
+                value={inputs.salaryFrequency}
+                onChange={(e) =>
+                  set("salaryFrequency", e.target.value as Inputs["salaryFrequency"])
+                }
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 bg-white"
+              >
+                <option value="yearly">Per year</option>
+                <option value="monthly">Per month</option>
+                <option value="biweekly">Every 2 weeks</option>
+                <option value="weekly">Per week</option>
+              </select>
+            </div>
+          </>
+        ) : (
+          <InputField
+            label="Hourly wage"
+            prefix="$"
+            value={inputs.hourlyWage}
+            onChange={(v) => set("hourlyWage", v)}
+            placeholder="25"
+            required
+            error={!parseFloat(inputs.hourlyWage)}
+          />
+        )}
+
+        <InputField
+          label="Hours per week"
+          value={inputs.weeklyHours}
+          onChange={(v) => set("weeklyHours", v)}
+          placeholder="40"
+          required
+          error={!parseFloat(inputs.weeklyHours)}
+        />
+
+        {hourlyRate > 0 && (
+          <p className="text-xs text-gray-400 mt-2">
+            ≈ ${hourlyRate.toFixed(2)}/hr
+          </p>
         )}
       </section>
 
