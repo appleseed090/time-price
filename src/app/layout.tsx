@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { siteMetadata } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,11 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Time Price — See What Things Really Cost in Hours",
-  description:
-    "Convert any purchase price into hours of your working life. A simple tool to make smarter spending decisions.",
-};
+export const metadata = siteMetadata;
 
 export default function RootLayout({
   children,
