@@ -1,8 +1,12 @@
 import Calculator from "../components/Calculator";
+import FAQ from "../components/FAQ";
+import JsonLd from "../components/JsonLd";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
+      <JsonLd />
+
       {/* Header */}
       <header className="pt-10 pb-6 px-4 text-center">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
@@ -14,8 +18,9 @@ export default function Home() {
       </header>
 
       {/* Main */}
-      <main className="px-4 pb-12">
+      <main className="px-4 pb-12 space-y-6 max-w-xl mx-auto">
         <Calculator />
+        <FAQ />
       </main>
 
       {/* Footer */}
