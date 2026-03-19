@@ -24,7 +24,7 @@ const FAQ_ITEMS: FaqItem[] = [
       <>
         Using your{" "}
         <a
-          href="https://adpvantage.adp.com/gross-pay-vs-net-pay-infographic.html"
+          href="https://www.adp.com/resources/tools/calculators/salary-paycheck-calculator.aspx"
           target="_blank"
           rel="noopener noreferrer"
           className={LINK_CLASS}
