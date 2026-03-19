@@ -1,4 +1,16 @@
-const FAQ_ITEMS = [
+import type { ReactNode } from "react";
+
+const LINK_CLASS = "text-indigo-600 underline hover:text-indigo-800";
+
+interface FaqItem {
+  question: string;
+  /** Plain text for JSON-LD schema */
+  answer: string;
+  /** JSX with links for display (falls back to answer if not set) */
+  richAnswer?: ReactNode;
+}
+
+const FAQ_ITEMS: FaqItem[] = [
   {
     question: "How do I calculate the time cost of a purchase?",
     answer:
@@ -7,7 +19,23 @@ const FAQ_ITEMS = [
   {
     question: "Should I use my gross salary or take-home pay?",
     answer:
-      'Using your take-home (after-tax) pay gives a more accurate picture of how long you truly need to work. Your gross salary overstates your earning power because you never see the taxed portion. We recommend using net pay for the most honest result.',
+      "Using your take-home (after-tax) pay gives a more accurate picture of how long you truly need to work. Your gross salary overstates your earning power because you never see the taxed portion. We recommend using net pay for the most honest result.",
+    richAnswer: (
+      <>
+        Using your{" "}
+        <a
+          href="https://adpvantage.adp.com/gross-pay-vs-net-pay-infographic.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={LINK_CLASS}
+        >
+          take-home (after-tax) pay
+        </a>{" "}
+        gives a more accurate picture of how long you truly need to work. Your
+        gross salary overstates your earning power because you never see the
+        taxed portion. We recommend using net pay for the most honest result.
+      </>
+    ),
   },
   {
     question: "How does the recurring purchase calculation work?",
@@ -23,6 +51,22 @@ const FAQ_ITEMS = [
     question: "Why think about purchases in terms of time?",
     answer:
       "Money is abstract, but time is something you feel. Thinking in hours of work makes costs tangible and helps you make more intentional spending decisions. It's the core idea behind the book 'Your Money or Your Life' by Vicki Robin.",
+    richAnswer: (
+      <>
+        Money is abstract, but time is something you feel. Thinking in hours of
+        work makes costs tangible and helps you make more intentional spending
+        decisions. It&apos;s the core idea behind the book{" "}
+        <a
+          href="https://yourmoneyoryourlife.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={LINK_CLASS}
+        >
+          <em>Your Money or Your Life</em>
+        </a>{" "}
+        by Vicki Robin.
+      </>
+    ),
   },
 ];
 
@@ -39,7 +83,7 @@ export default function FAQ() {
               {item.question}
             </dt>
             <dd className="mt-1 text-sm text-gray-600 leading-relaxed">
-              {item.answer}
+              {item.richAnswer ?? item.answer}
             </dd>
           </div>
         ))}
